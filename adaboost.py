@@ -80,23 +80,29 @@ def main():
 
     assert len(X_train) == len(y_train) # delete this line
 
-    hypotheses, alpha_vals = run_adaboost(X_train, y_train, T)
+    # hypotheses, alpha_vals = run_adaboost(X_train, y_train, T)
 
     ##############################################
     
     # For part a
-    train_error = calc_error(X_train, y_train, hypotheses, alpha_vals)
-    test_error = calc_error(X_test, y_test, hypotheses, alpha_vals)
-    iters_scale = list(range(T))
-    plt.figure(1)
-    plt.title("Training and test errors as a function of t (iteration)")
-    plt.xlabel("t")
-    plt.ylabel("Error")
-    plt.plot(iters_scale, train_error, '-', label="training error")
-    plt.plot(iters_scale, test_error, '-', label="test error")
-    plt.legend()
-    plt.show()
+    # train_error = calc_error(X_train, y_train, hypotheses, alpha_vals)
+    # test_error = calc_error(X_test, y_test, hypotheses, alpha_vals)
+    # iters_scale = list(range(T))
+    # plt.figure(1)
+    # plt.title("Training and test errors as a function of t (iteration)")
+    # plt.xlabel("t")
+    # plt.ylabel("Error")
+    # plt.plot(iters_scale, train_error, '-', label="training error")
+    # plt.plot(iters_scale, test_error, '-', label="test error")
+    # plt.legend()
+    # plt.show()
 
+    # For part b
+    T = 10
+    print(f"Try {vocab[2]}")
+    hypotheses, alpha_vals = run_adaboost(X_train, y_train, T)
+    for i in range(T):
+        print(f"Hypothesis {i}: {hypotheses[i]}, word at{hypotheses[i][1]}: {vocab[hypotheses[i][1]]}")
 
     ##############################################
 
