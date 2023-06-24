@@ -31,8 +31,8 @@ def run_adaboost(X_train, y_train, T):
     where index is the index in the vector to compare to threshold and
     sign represents the return sign for smaller than threshold.
     """
-    hypotheses = []
-    hypotheses_weights = []
+    hypotheses = [0] * T
+    hypotheses_weights = [0] * T
 
     # Initializing distribution to be uniform
     dist = [1/len_train] * len_train
@@ -40,7 +40,7 @@ def run_adaboost(X_train, y_train, T):
     for t in range(T):
         # returns chosen hypothesis and its error
         ht, epsilon_t = next_hypothesis(dist, X_train, max_per_coor, y_train)
-        print(f"Next weak hypothesis is: {ht} with epsilon: {epsilon_t}") # delete
+        print(f"weak hypothesis of round {t=} is: {ht} with epsilon: {epsilon_t}") # delete
         wt = 0.5 * np.log((1 - epsilon_t) / epsilon_t)
         print(f"{wt=}") # delete
         dist = calc_updated_weights(dist, wt, X_train, y_train, ht)
@@ -48,8 +48,8 @@ def run_adaboost(X_train, y_train, T):
         part_dist = dist[:10]
         print(f"{part_dist=}")
         ##### delete
-        hypotheses.append(ht)
-        hypotheses_weights.append(wt)
+        hypotheses[t] = ht
+        hypotheses_weights[t] = wt
 
     print(f"{hypotheses=}")
     print("!!!!!!!!!!!!!!!!!!!!!")
@@ -89,7 +89,7 @@ def main():
     test_error = calc_error(X_test, y_test, hypotheses, alpha_vals)
     iters_scale = list(range(T))
     plt.figure(1)
-    plt.title("Training and test errors averaged as a function of t (iteration)")
+    plt.title("Training and test errors as a function of t (iteration)")
     plt.xlabel("t")
     plt.ylabel("Error")
     plt.plot(iters_scale, train_error, '-', label="training error")
@@ -180,18 +180,18 @@ def calc_updated_weights(dist, wt, X_vec, y_vec, ht):
     """
     Returns updated weights of ditribution based on passed results from previous round
     """
-    rv = []
     sample_size = len(X_vec)
-    denom = 0
+    nominators = np.zeros(sample_size)
     neg_wt = -1 * wt
-    for j in range(sample_size):
-        denom += dist[j] * np.exp(neg_wt * y_vec[j] * eval_hypothesis(X_vec[j], ht))
+    # for j in range(sample_size): # delete
+    #     denom += dist[j] * np.exp(neg_wt * y_vec[j] * eval_hypothesis(X_vec[j], ht))
     
     for i in range(sample_size):
         nominator = dist[i] * np.exp(neg_wt * y_vec[i] * eval_hypothesis(X_vec[i], ht))
-        rv.append(nominator / denom)
+        nominators[i] = nominator
     
-    return rv
+    denom = nominators.sum()
+    return np.divide(nominators, denom)
 
 def calc_error(X_vec, y_vec, hypotheses, alpha_vals):
     sample_size = len(X_vec)
