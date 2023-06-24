@@ -83,8 +83,19 @@ def main():
     hypotheses, alpha_vals = run_adaboost(X_train, y_train, T)
 
     ##############################################
-    # You can add more methods here, if needed.
-
+    
+    # For part a
+    train_error = calc_error(X_train, y_train, hypotheses, alpha_vals)
+    test_error = calc_error(X_test, y_test, hypotheses, alpha_vals)
+    iters_scale = list(range(T))
+    plt.figure(1)
+    plt.title("Training and test errors averaged as a function of t (iteration)")
+    plt.xlabel("t")
+    plt.ylabel("Error")
+    plt.plot(iters_scale, train_error, '-', label="training error")
+    plt.plot(iters_scale, test_error, '-', label="test error")
+    plt.legend()
+    plt.show()
 
 
     ##############################################
@@ -181,6 +192,27 @@ def calc_updated_weights(dist, wt, X_vec, y_vec, ht):
         rv.append(nominator / denom)
     
     return rv
+
+def calc_error(X_vec, y_vec, hypotheses, alpha_vals):
+    sample_size = len(X_vec)
+    num_iters = len(hypotheses)
+    # Sum for each data point of values of hypotheses, updating per iteration
+    sum_per_point = [0] * sample_size
+    error_per_iter = []
+    
+    for t in range(num_iters):
+        mispredictions = 0
+        for i in range(sample_size):
+            sum_per_point[i] += alpha_vals[t] * eval_hypothesis(X_vec[i], hypotheses[t])
+            prediction = 1
+            if (sum_per_point[i] < 0):
+                prediction = -1
+            if (prediction != y_vec[i]):
+                mispredictions += 1
+        
+        error_per_iter.append(mispredictions / sample_size)
+    
+    return error_per_iter
 
 
 ############### Move to the methods place under run_adaboost
