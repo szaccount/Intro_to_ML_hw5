@@ -121,7 +121,7 @@ def next_hypothesis(dist, X_vec, max_per_coor, y_vec):
 
     sample_size = len(X_vec)
     for indx in range(sample_size):
-        for thresh in range(1, max_per_coor[indx]): # maybe try to include the boundries (0, max_per_coor[indx] + 1)
+        for thresh in range(0, max_per_coor[indx] + 1): # maybe try to include the boundries (0, max_per_coor[indx] + 1)
             for sign in (1, -1):
                 hypo_try = (sign, indx, thresh)
                 error_for_hypo = calc_hypothesis_error(dist, X_vec, y_vec, hypo_try)
