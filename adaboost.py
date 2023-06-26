@@ -98,11 +98,27 @@ def main():
     # plt.show()
 
     # For part b
-    T = 10
-    print(f"Try {vocab[2]}")
+    # T = 10
+    # print(f"Try {vocab[2]}") # delete
+    # hypotheses, alpha_vals = run_adaboost(X_train, y_train, T)
+    # for i in range(T):
+    #     print(f"Hypothesis {i}: {hypotheses[i]}, word at{hypotheses[i][1]}: {vocab[hypotheses[i][1]]}")
+
+    # For part c
+    T = 80
     hypotheses, alpha_vals = run_adaboost(X_train, y_train, T)
-    for i in range(T):
-        print(f"Hypothesis {i}: {hypotheses[i]}, word at{hypotheses[i][1]}: {vocab[hypotheses[i][1]]}")
+    train_error = calc_exp_error(X_train, y_train, hypotheses, alpha_vals)
+    test_error = calc_exp_error(X_test, y_test, hypotheses, alpha_vals)
+    iters_scale = list(range(T))
+    plt.figure(1)
+    plt.title("Training and test exponential loss as a function of t (iteration)")
+    plt.xlabel("t")
+    plt.ylabel("Error")
+    plt.plot(iters_scale, train_error, '-', label="training error")
+    plt.plot(iters_scale, test_error, '-', label="test error")
+    plt.legend()
+    plt.show()
+
 
     ##############################################
 
@@ -219,6 +235,23 @@ def calc_error(X_vec, y_vec, hypotheses, alpha_vals):
         error_per_iter.append(mispredictions / sample_size)
     
     return error_per_iter
+
+def calc_exp_error(X_vec, y_vec, hypotheses, alpha_vals):
+    sample_size = len(X_vec)
+    num_iters = len(hypotheses)
+    # Sum for each data point of values of hypotheses, updating per iteration
+    sum_per_point = [0] * sample_size
+    loss_per_iter = []
+    
+    for t in range(num_iters):
+        loss_in_t = 0
+        for i in range(sample_size):
+            sum_per_point[i] += alpha_vals[t] * eval_hypothesis(X_vec[i], hypotheses[t])
+            loss_in_t += np.exp(-y_vec[i] * sum_per_point[i])
+
+        loss_per_iter.append(loss_in_t / sample_size)
+    
+    return loss_per_iter
 
 
 ############### Move to the methods place under run_adaboost
