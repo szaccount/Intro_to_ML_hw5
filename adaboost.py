@@ -40,20 +40,12 @@ def run_adaboost(X_train, y_train, T):
     for t in range(T):
         # returns chosen hypothesis and its error
         ht, epsilon_t = next_hypothesis(dist, X_train, max_per_coor, y_train)
-        print(f"weak hypothesis of round {t=} is: {ht} with epsilon: {epsilon_t}") # delete
+        # print(f"weak hypothesis of round {t=} is: {ht} with epsilon: {epsilon_t}")
         wt = 0.5 * np.log((1 - epsilon_t) / epsilon_t)
-        print(f"{wt=}") # delete
         dist = calc_updated_weights(dist, wt, X_train, y_train, ht)
-        ##### delete
-        part_dist = dist[:10]
-        print(f"{part_dist=}")
-        ##### delete
         hypotheses[t] = ht
         hypotheses_weights[t] = wt
 
-    print(f"{hypotheses=}")
-    print("!!!!!!!!!!!!!!!!!!!!!")
-    print(f"{hypotheses_weights=}")
     return hypotheses, hypotheses_weights
 
 
@@ -90,7 +82,7 @@ def next_hypothesis(dist, X_vec, max_per_coor, y_vec):
 
     sample_size = len(X_vec)
     for indx in range(sample_size):
-        for thresh in range(0, max_per_coor[indx] + 1): # maybe try to include the boundries (0, max_per_coor[indx] + 1)
+        for thresh in range(0, max_per_coor[indx] + 1):
             for sign in (1, -1):
                 hypo_try = (sign, indx, thresh)
                 error_for_hypo = calc_hypothesis_error(dist, X_vec, y_vec, hypo_try)
@@ -141,8 +133,6 @@ def calc_updated_weights(dist, wt, X_vec, y_vec, ht):
     sample_size = len(X_vec)
     nominators = np.zeros(sample_size)
     neg_wt = -1 * wt
-    # for j in range(sample_size): # delete
-    #     denom += dist[j] * np.exp(neg_wt * y_vec[j] * eval_hypothesis(X_vec[j], ht))
     
     for i in range(sample_size):
         nominator = dist[i] * np.exp(neg_wt * y_vec[i] * eval_hypothesis(X_vec[i], ht))
@@ -200,8 +190,6 @@ def main():
     if not data:
         return
     (X_train, y_train, X_test, y_test, vocab) = data
-
-    assert len(X_train) == len(y_train) # delete this line
 
     # hypotheses, alpha_vals = run_adaboost(X_train, y_train, T)
 
